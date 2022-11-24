@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
+import ReactTable from 'react-table-6';
+import 'react-table-6/react-table.css';
 
 export default function Carlist() {
     const [cars, setCars] = useState([]);
@@ -8,55 +10,45 @@ export default function Carlist() {
     }, []);
 
     const fetchCars = () => {
-        fetch('http://localhost:8080/rest/cars')
+        fetch('https://s22backend.herokuapp.com/')
             .then(response => response.json())
             .then(responseData => {
                 console.log(responseData);
-                //setCars(responseData.cars);
                 setCars(responseData);
                 console.log("cars ", cars);
             })
             .catch(err => console.error(err));
     }
 
-    /*     const columns = [
-            { field: 'brand', headerName: 'Brand', width: 200 },
-            { field: 'model', headerName: 'Model', width: 200 },
-            { field: 'color', headerName: 'Color', width: 200 },
-            { field: 'year', headerName: 'Year', width: 150 },
-            { field: 'price', headerName: 'Price', width: 150 },
-            {
-                field: '_links.car.href',
-                headerName: '',
-                sortable: false,
-                filterable: false,
+    const deleteCar = (id) => {
+        console.log("Auton id, jota poistetaan on ", id);
+        fetch('https://s22backend.herokuapp.com/', {
+            mode: 'no-cors',
+            method: 'DELETE',
+            "headers": {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'https://s22backend.herokuapp.com/',
+                'accept': 'application/json',
+                'content-type': 'application/json'
             }
-        ]; */
+        })
+            .then(res => fetchCars())
+            .catch(err => console.error(err))
+    }
+
+    const columns = [
+        { Header: 'Brand', accessor: 'brand' },
+        { Header: 'Model', accessor: 'model' },
+        { Header: 'Color', accessor: 'color' },
+        { Header: 'RegisterNbr', accessor: 'registerNumber' },
+        { Header: 'Year', accessor: 'year' },
+        { Header: 'Price', accessor: 'price' },
+        { accessor: 'id', Cell: row => <button onClick={() => deleteCar(row.value)} > Delete</button > }
+    ];
     return (
         <div>
             <h1>Carlist</h1>
-            <table>
-                <tbody>
-
-                    <tr>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Year</th>
-                        <th>Owner last name</th>
-                    </tr>
-                    {
-                        cars.map((car, index) =>
-                            <tr key={index}>
-                                <td>{car.brand}</td>
-                                <td>{car.model}</td>
-                                <td>{car.year}</td>
-                                <td>{car.owner.lastName}</td>
-                            </tr>)
-                    }
-                </tbody>
-            </table>
-
-
+            <ReactTable filterable={true} data={cars} columns={columns} />
         </div>
     )
 }
