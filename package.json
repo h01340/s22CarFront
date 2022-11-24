@@ -2,7 +2,6 @@
   "name": "carfront",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://s22backend.herokuapp.com",
   "engines": {
     "node": "16.13.0"
   },
